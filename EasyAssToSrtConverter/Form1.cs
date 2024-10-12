@@ -103,6 +103,7 @@ namespace EasyAssToSrtConverter
             var lines = File.ReadAllLines(assFilePath);
             var srtLines = new List<string>();
             int index = 1;
+            int limit = 8;
 
             foreach (var line in lines)
             {
@@ -110,12 +111,18 @@ namespace EasyAssToSrtConverter
                 {
                     var newLine = Regex.Replace(line, @"\{[^}]*\}", string.Empty);
                     var parts = newLine.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    int limit = 8;
+                    
                     if (parts.Length >= limit)
                     {
                         var startTime = ConvertAssTimeToSrtTime(parts[1]);
                         var endTime = ConvertAssTimeToSrtTime(parts[2]);
                         var text = string.Join(",", parts, limit - 1, 1).Replace(@"\N", "\n").Trim();
+
+                        if (text == "0000")
+                        {
+                            limit = 9;
+                            text = string.Join(",", parts, limit - 1, 1).Replace(@"\N", "\n").Trim();
+                        }
 
                         if (text.Contains("---"))
                         {

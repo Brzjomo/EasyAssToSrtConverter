@@ -108,14 +108,14 @@ namespace EasyAssToSrtConverter
             {
                 if (line.StartsWith("Dialogue:"))
                 {
-                    var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 9)
+                    var newLine = Regex.Replace(line, @"\{[^}]*\}", string.Empty);
+                    var parts = newLine.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    int limit = 8;
+                    if (parts.Length >= limit)
                     {
                         var startTime = ConvertAssTimeToSrtTime(parts[1]);
                         var endTime = ConvertAssTimeToSrtTime(parts[2]);
-                        var text = string.Join(",", parts, 8, parts.Length - 8).Replace(@"\N", "\n").Trim();
-
-                        text = Regex.Replace(text, @"\{[^}]*\}", string.Empty);
+                        var text = string.Join(",", parts, limit - 1, 1).Replace(@"\N", "\n").Trim();
 
                         if (text.Contains("---"))
                         {
